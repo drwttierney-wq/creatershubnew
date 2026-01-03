@@ -1,0 +1,97 @@
+import { platforms, toolCategories, getToolsForPlatform } from '@/data/platforms';
+import { PlatformCard } from '@/components/dashboard/PlatformCard';
+import { QuickStats } from '@/components/dashboard/QuickStats';
+import { CategorySection } from '@/components/dashboard/CategorySection';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Sparkles, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+const Index = () => {
+  const allTools = getToolsForPlatform('all');
+  
+  return (
+    <div className="space-y-8">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-purple-500/5 to-background p-8 border border-border/50">
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <span className="text-sm font-medium text-primary">Welcome back, Creator</span>
+          </div>
+          <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+            Your Creator <span className="gradient-text">Command Center</span>
+          </h1>
+          <p className="text-muted-foreground mt-2 max-w-xl">
+            All the tools you need across 13+ platforms. Analytics, scheduling, hashtags, and templates — everything in one place.
+          </p>
+          <div className="flex items-center gap-3 mt-6">
+            <Button className="bg-gradient-to-r from-primary to-purple-500 hover:opacity-90 transition-opacity">
+              <Zap className="w-4 h-4 mr-2" />
+              Quick Start
+            </Button>
+            <Button variant="outline">
+              Explore Tools
+            </Button>
+          </div>
+        </div>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/2 w-48 h-48 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-2xl" />
+      </div>
+
+      {/* Quick Stats */}
+      <section>
+        <h2 className="font-display text-xl font-semibold text-foreground mb-4">Overview</h2>
+        <QuickStats />
+      </section>
+
+      {/* Platforms Grid */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-display text-xl font-semibold text-foreground">Your Platforms</h2>
+          <span className="text-sm text-muted-foreground">{platforms.length} connected</span>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {platforms.slice(0, 10).map((platform, index) => (
+            <PlatformCard 
+              key={platform.id} 
+              platform={platform} 
+              delay={index * 50}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Tools by Category */}
+      <section>
+        <h2 className="font-display text-xl font-semibold text-foreground mb-4">Creator Tools</h2>
+        <Tabs defaultValue="analytics" className="space-y-6">
+          <TabsList className="bg-secondary/50 p-1 h-auto flex-wrap">
+            {toolCategories.map((category) => (
+              <TabsTrigger 
+                key={category.id} 
+                value={category.id}
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm px-4 py-2"
+              >
+                <span className="mr-2">{category.icon}</span>
+                {category.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          
+          {toolCategories.map((category) => (
+            <TabsContent key={category.id} value={category.id} className="mt-6">
+              <CategorySection 
+                category={category} 
+                tools={allTools.filter(t => t.category === category.id)}
+              />
+            </TabsContent>
+          ))}
+        </Tabs>
+      </section>
+    </div>
+  );
+};
+
+export default Index;
