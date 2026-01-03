@@ -1,0 +1,116 @@
+import * as React from "react";
+import { ChevronDown, ChevronRight, MoreHorizontal, Settings, LogOut, HelpCircle, Sparkles } from "lucide-react";
+import { NavLink } from "./NavLink";
+import { Button } from "./button";
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
+import { Badge } from "./badge";
+import { cn } from "@/lib/utils";
+
+const sidebarItems = [
+  {
+    title: "Main",
+    items: [
+      { label: "Dashboard", href: "/", icon: "🏠" },
+      { label: "Discover", href: "/discover", icon: "🔍" },
+      { label: "Messages", href: "/messages", icon: "💬", badge: 6 },
+      { label: "Profile", href: "/profile", icon: "👤" },
+    ],
+  },
+  {
+    title: "Tools",
+    items: [
+      { label: "Analytics", href: "#", icon: "📊" },
+      { label: "Content Calendar", href: "#", icon: "📅" },
+      { label: "Hashtag Generator", href: "#", icon: "#️⃣" },
+      { label: "Templates", href: "#", icon: "✨" },
+    ],
+  },
+  {
+    title: "Settings",
+    items: [
+      { label: "Account Settings", href: "#", icon: "⚙️" },
+      { label: "Billing", href: "#", icon: "💳", badge: "Pro" },
+      { label: "Help & Support", href: "#", icon: "❓" },
+    ],
+  },
+];
+
+export function AppSidebar() {
+  const [openGroups, setOpenGroups] = React.useState<string[]>(["Main"]);
+
+  const toggleGroup = (title: string) => {
+    setOpenGroups(prev => 
+      prev.includes(title) 
+        ? prev.filter(t => t !== title)
+        : [...prev, title]
+    );
+  };
+
+  return (
+    <div className="flex h-full flex-col gap-4 bg-sidebar-background border-r border-sidebar-border">
+      <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-6 h-6 text-primary" />
+          <span className="font-display font-bold text-xl">CreatorHub</span>
+        </div>
+      </div>
+
+      <nav className="flex-1 space-y-6 px-4 overflow-y-auto">
+        {sidebarItems.map((group) => {
+          const isOpen = openGroups.includes(group.title);
+          return (
+            <div key={group.title}>
+              <button
+                onClick={() => toggleGroup(group.title)}
+                className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors"
+              >
+                <span>{group.title}</span>
+                {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              </button>
+              {isOpen && (
+                <div className="mt-2 space-y-1">
+                  {group.items.map((item) => (
+                    <NavLink key={item.href} href={item.href} className="block">
+                      {({ isActive }) => (
+                        <div className={cn(
+                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                          isActive 
+                            ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium" 
+                            : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+                        )}>
+                          <span className="text-lg">{item.icon}</span>
+                          <span>{item.label}</span>
+                          {item.badge && (
+                            <Badge className="ml-auto" variant={typeof item.badge === "string" && item.badge === "Pro" ? "default" : "secondary"}>
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </div>
+                      )}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </nav>
+
+      <div className="border-t border-sidebar-border p-4">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src="" />
+            <AvatarFallback>C</AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-sidebar-foreground">Creator Pro</p>
+            <p className="text-xs text-sidebar-muted-foreground">Pro Plan</p>
+          </div>
+          <Button variant="ghost" size="icon">
+            <LogOut className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
